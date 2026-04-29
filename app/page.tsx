@@ -38,46 +38,44 @@ const SectionHeading = ({ subtitle, title, light = false }: { subtitle: string, 
  * Standardize image URLs to work with the Next.js public folder or external links.
  */
 const formatImage = (url: string) => {
-  if (!url) return "";
-  if (url.startsWith('https://baget-grain-gavel.vercel.app')) {
-    return url.replace('https://baget-grain-gavel.vercel.app', '');
+  if (!url) return "/images/cinematic-hero-product-shot-for-grain-.png";
+  
+  // Strip domain if it's the current site (for local image references)
+  const cleanUrl = url.replace(/^https?:\/\/baget-grain-gavel\.vercel\.app/, '');
+  
+  // Ensure it starts with / if it's relative
+  if (!cleanUrl.startsWith('http') && !cleanUrl.startsWith('/')) {
+    return `/${cleanUrl}`;
   }
-  if (!url.startsWith('http') && !url.startsWith('/')) {
-    return `/${url}`;
-  }
-  return url;
+  return cleanUrl;
 };
 
 export default async function HomePage() {
   const allRows = await getInventory();
   
-  // Filter and Deduplicate
-  // We prioritize rows that have rarity/dimensions/stripe_link
+  // Filter valid items
   const uniqueItems = allRows.filter((row: any) => {
-    // Filter out verification rows
-    if (row.data._baget_verify) return false;
-    // Basic validation
-    return row.data.species && row.data.price_cents;
+    return row.data && row.data.species && row.data.price_cents;
   });
 
   // Extract Subscriptions (Master, Gavel, Grain tiers)
-  // We take the "latest" versions of these (usually the ones with more detailed descriptions)
   const subscriptions = [
-    uniqueItems.find((r: any) => r.data.tier === "Master" && r.data.species.includes("Master")),
-    uniqueItems.find((r: any) => r.data.tier === "Gavel" && r.data.species.includes("Gavel")),
-    uniqueItems.find((r: any) => r.data.tier === "Grain" && r.data.species.includes("Grain"))
+    uniqueItems.find((r: any) => r.data.tier === "Master"),
+    uniqueItems.find((r: any) => r.data.tier === "Gavel"),
+    uniqueItems.find((r: any) => r.data.tier === "Grain" && r.data.species.includes("Box"))
   ].filter(Boolean);
 
   // Extract Marketplace Items
   const marketplace = uniqueItems.filter((r: any) => 
-    r.data.tier === "Marketplace" || 
-    (r.data.sawmill_id && !r.data.species.includes("Box") && !r.data.species.includes("Edition"))
-  );
+    !r.data.species.includes("Subscription Box") && 
+    !r.data.species.includes("Edition") &&
+    (r.data.tier === "Marketplace" || r.data.sawmill_id !== "bell-forest-products" || r.data.tier === "Grain")
+  ).filter(item => !subscriptions.some(s => s.data.species === item.data.species));
 
   return (
     <div className="bg-[#FAF6F1] min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center bg-[#121212] overflow-hidden">
+      <section className="relative min-h-[90vh] flex items-center bg-[#121212] overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
           <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
              <defs>
@@ -90,7 +88,7 @@ export default async function HomePage() {
           </svg>
         </div>
         
-        <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="text-left">
             <div className="mb-8 inline-block">
                <GoldBadge text="June 2026 Collection Live" />
@@ -113,14 +111,14 @@ export default async function HomePage() {
           </div>
           
           <div className="hidden lg:block relative">
-            <div className="aspect-[4/5] bg-[#1A1A1A] p-2 border border-white/5">
+            <div className="aspect-[4/5] bg-[#1A1A1A] p-2 border border-white/5 shadow-2xl">
               <img 
                 src="/images/cinematic-hero-product-shot-for-grain-.png" 
                 alt="Master Edition Hero" 
-                className="w-full h-full object-cover grayscale-[30%]"
+                className="w-full h-full object-cover grayscale-[10%] hover:grayscale-0 transition-all duration-1000"
               />
             </div>
-            <div className="absolute -bottom-10 -left-10 bg-[#D4AF37] p-10 text-[#121212] shadow-2xl">
+            <div className="absolute -bottom-10 -left-10 bg-[#D4AF37] p-10 text-[#121212] shadow-2xl transform hover:-translate-y-2 transition-transform">
               <div className="text-4xl font-serif mb-1">0.35 BF</div>
               <div className="text-[10px] uppercase font-bold tracking-widest opacity-80">Ziricote + Steel</div>
             </div>
@@ -129,7 +127,7 @@ export default async function HomePage() {
       </section>
 
       {/* Certification Bar */}
-      <section className="bg-[#121212] py-12 border-y border-white/5">
+      <section className="bg-[#121212] py-12 border-y border-white/5 relative z-20">
         <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-between gap-12">
           {[
             { label: '6.0-8.0% MC', sub: 'Moisture Audit' },
@@ -156,7 +154,7 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           {subscriptions.map((item: any, i) => (
-            <div key={i} className="bg-white border border-[#121212]/5 group">
+            <div key={i} className="bg-white border border-[#121212]/5 group flex flex-col">
               <div className="aspect-[3/4] overflow-hidden bg-[#F0EBE5]">
                 <img 
                   src={formatImage(item.data.image_url)} 
@@ -164,16 +162,16 @@ export default async function HomePage() {
                   className="w-full h-full object-cover grayscale-[40%] group-hover:grayscale-0 transition-all duration-700 group-hover:scale-105"
                 />
               </div>
-              <div className="p-10">
+              <div className="p-10 flex flex-col flex-grow">
                 <div className="flex justify-between items-start mb-6">
-                  <div>
+                  <div className="pr-4">
                     <div className="text-[10px] uppercase font-bold tracking-widest text-[#D4AF37] mb-2">{item.data.tier} Edition</div>
-                    <h3 className="text-3xl font-serif">{item.data.species.split(' Edition')[0]}</h3>
+                    <h3 className="text-3xl font-serif leading-tight">{item.data.species.replace(' Subscription Box', '')}</h3>
                   </div>
-                  <div className="text-2xl font-serif">${item.data.price_cents / 100}</div>
+                  <div className="text-2xl font-serif text-[#121212]">${Math.round(item.data.price_cents / 100)}</div>
                 </div>
                 
-                <p className="text-sm text-[#121212]/60 font-light leading-relaxed mb-8">
+                <p className="text-sm text-[#121212]/60 font-light leading-relaxed mb-8 flex-grow">
                   {item.data.description}
                 </p>
 
@@ -200,40 +198,46 @@ export default async function HomePage() {
         <div className="max-w-7xl mx-auto">
           <SectionHeading subtitle="The Marketplace" title="Sawmill Off-cuts" light />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            {marketplace.map((item: any, i) => (
-              <div key={i} className="group border border-white/5 hover:border-white/20 transition-all p-6 bg-white/5">
-                <div className="aspect-square mb-8 overflow-hidden">
-                  <img 
-                    src={formatImage(item.data.image_url)} 
-                    alt={item.data.species} 
-                    className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all group-hover:scale-105"
-                  />
-                </div>
-                
-                <div className="flex justify-between items-baseline mb-4">
-                  <h3 className="text-2xl font-serif text-[#FAF6F1]">{item.data.species}</h3>
-                  <span className="text-[#D4AF37] font-serif">${item.data.price_cents / 100}</span>
-                </div>
-                
-                <p className="text-[#FAF6F1]/40 text-xs font-light mb-8 leading-relaxed line-clamp-2">
-                  {item.data.description}
-                </p>
-                
-                <div className="flex justify-between text-[9px] uppercase font-bold tracking-widest text-[#FAF6F1]/60 mb-8">
-                  <span>{item.data.dimensions}</span>
-                  <span>{item.data.moisture_content}% MC</span>
-                </div>
+          {marketplace.length === 0 ? (
+            <div className="text-center py-20 border border-white/5 bg-white/5">
+              <p className="text-[#FAF6F1]/40 font-serif italic text-xl">New PNW inventory arriving shortly.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+              {marketplace.map((item: any, i) => (
+                <div key={i} className="group border border-white/5 hover:border-white/20 transition-all p-6 bg-white/5 flex flex-col">
+                  <div className="aspect-square mb-8 overflow-hidden bg-[#1A1A1A]">
+                    <img 
+                      src={formatImage(item.data.image_url)} 
+                      alt={item.data.species} 
+                      className="w-full h-full object-cover grayscale-[20%] group-hover:grayscale-0 transition-all group-hover:scale-110 duration-700"
+                    />
+                  </div>
+                  
+                  <div className="flex justify-between items-baseline mb-4">
+                    <h3 className="text-2xl font-serif text-[#FAF6F1]">{item.data.species}</h3>
+                    <span className="text-[#D4AF37] font-serif text-lg">${item.data.price_cents / 100}</span>
+                  </div>
+                  
+                  <p className="text-[#FAF6F1]/40 text-xs font-light mb-8 leading-relaxed line-clamp-3 flex-grow">
+                    {item.data.description}
+                  </p>
+                  
+                  <div className="flex justify-between text-[9px] uppercase font-bold tracking-widest text-[#FAF6F1]/60 mb-8 pt-4 border-t border-white/5">
+                    <span>{item.data.dimensions}</span>
+                    <span>{item.data.moisture_content}% MC</span>
+                  </div>
 
-                <a 
-                  href={item.data.stripe_link || '#'}
-                  className="block w-full text-center py-4 border border-[#D4AF37]/50 text-[#D4AF37] font-bold uppercase tracking-widest text-[9px] hover:bg-[#D4AF37] hover:text-[#121212] transition-all"
-                >
-                  Purchase Material
-                </a>
-              </div>
-            ))}
-          </div>
+                  <a 
+                    href={item.data.stripe_link || '#'}
+                    className="block w-full text-center py-4 border border-[#D4AF37]/50 text-[#D4AF37] font-bold uppercase tracking-widest text-[9px] hover:bg-[#D4AF37] hover:text-[#121212] transition-all"
+                  >
+                    Purchase Material
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -264,12 +268,14 @@ export default async function HomePage() {
           </div>
           
           <div className="relative">
-             <img 
-               src="/images/top-down-technical-unboxing-view-of-the-.png" 
-               alt="Technical Unboxing" 
-               className="w-full border border-[#121212]/5 shadow-2xl"
-             />
-             <div className="absolute -bottom-10 -right-10 bg-[#121212] p-10 text-[#FAF6F1]">
+             <div className="border border-[#121212]/5 shadow-2xl bg-[#F0EBE5] overflow-hidden">
+               <img 
+                 src="/images/top-down-technical-unboxing-view-of-the-.png" 
+                 alt="Technical Unboxing" 
+                 className="w-full hover:scale-105 transition-transform duration-[2000ms]"
+               />
+             </div>
+             <div className="absolute -bottom-10 -right-10 bg-[#121212] p-10 text-[#FAF6F1] shadow-2xl">
                <div className="text-3xl font-serif mb-2 text-[#D4AF37]">120 Grit</div>
                <div className="text-[10px] uppercase font-bold tracking-widest opacity-60">Surface Certified</div>
              </div>

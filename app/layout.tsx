@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Grain & Gavel | Artisanal Woodworking Subscriptions',
@@ -40,7 +41,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="pt-18">{children}</main>
+        <main className="pt-20">{children}</main>
 
         <footer className="bg-[#121212] text-[#FAF6F1] py-24 px-6">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
@@ -60,18 +61,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div>
               <h4 className="font-bold mb-6 uppercase tracking-widest text-xs text-[#D4AF37]">Operations</h4>
               <ul className="space-y-4 text-sm opacity-60">
-                <li><a href="#" className="hover:text-[#D4AF37]">Bell Forest Fulfillment</a></li>
-                <li><a href="#" className="hover:text-[#D4AF37]">Sourcing Standards</a></li>
-                <li><a href="#" className="hover:text-[#D4AF37]">Shipping Logistics</a></li>
+                <li><a href="#process" className="hover:text-[#D4AF37]">Bell Forest Fulfillment</a></li>
+                <li><a href="#process" className="hover:text-[#D4AF37]">Sourcing Standards</a></li>
+                <li><a href="#process" className="hover:text-[#D4AF37]">Shipping Logistics</a></li>
               </ul>
             </div>
             
             <div>
               <h4 className="font-bold mb-6 uppercase tracking-widest text-xs text-[#D4AF37]">Connect</h4>
               <ul className="space-y-4 text-sm opacity-60">
-                <li><a href="#" className="hover:text-[#D4AF37]">The June Waitlist</a></li>
-                <li><a href="#" className="hover:text-[#D4AF37]">Sawmill Partnerships</a></li>
-                <li><a href="#" className="hover:text-[#D4AF37]">CITES Compliance</a></li>
+                <li><a href="#tiers" className="hover:text-[#D4AF37]">The June Waitlist</a></li>
+                <li><a href="#marketplace" className="hover:text-[#D4AF37]">Sawmill Partnerships</a></li>
+                <li><a href="#process" className="hover:text-[#D4AF37]">CITES Compliance</a></li>
               </ul>
             </div>
           </div>
@@ -89,5 +90,3 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-
-import Link from 'next/link';
