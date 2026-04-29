@@ -18,19 +18,18 @@ export async function POST(request: Request) {
     const validatedData = InventoryUpdateSchema.parse(body);
 
     // 3. Update Database via Baget API
-    // We use the species as the externalKey for upserting
-    const dbId = "2935fa57-8b71-45f7-84bb-fdb46d872b06";
+    // MASTER INVENTORY: ca64d0ab-aae2-47bf-96ef-f37a0a306e51
+    const dbId = "ca64d0ab-aae2-47bf-96ef-f37a0a306e51";
     const response = await fetch(`https://stg-app.baget.ai/api/public/databases/${dbId}/rows`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // In a real production environment, this would use a secure internal token
         "Authorization": `Bearer ${process.env.BAGET_INTERNAL_TOKEN}`,
       },
       body: JSON.stringify({
         rows: [
           {
-            externalKey: validatedData.species,
+            externalKey: validatedData.species.toLowerCase().replace(/\s+/g, '-'),
             data: validatedData,
           },
         ],

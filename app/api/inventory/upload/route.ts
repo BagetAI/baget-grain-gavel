@@ -3,9 +3,6 @@ import { PartnerIntakeSchema } from "@/lib/schemas";
 
 /**
  * Supplier Inventory Intake API
- * Endpoint for sawmill partners (e.g., Northwest Timber, Stormo Hardwoods)
- * to POST new lumber listings directly.
- * 
  * Location: /api/inventory/upload
  */
 export async function POST(request: Request) {
@@ -20,8 +17,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = PartnerIntakeSchema.parse(body);
 
-    // 3. Prepare Internal Row Data
-    // We map the partner's focused fields to our full database schema
+    // 3. Prepare Internal Row Data for MASTER INVENTORY
     const dbRow = {
       species: validatedData.species,
       moisture_content: validatedData.moisture_content,
@@ -29,14 +25,17 @@ export async function POST(request: Request) {
       board_footage: validatedData.board_footage,
       price_cents: validatedData.price_cents,
       image_url: validatedData.image_url,
-      tier: "Grain", // Default tier for new partner intake
-      description: `Premium ${validatedData.species} stock sourced from our boutique sawmill partners. Kiln-dried to ${validatedData.moisture_content}% MC.`,
-      stripe_link: "https://buy.stripe.com/test_placeholder", // Placeholder for subscription link
-      rarity: "Rare", // Default rarity for partner species
+      tier: "Marketplace",
+      status: "Available",
+      description: `Premium ${validatedData.species} stock sourced from PNW boutique mills. Kiln-dried to ${validatedData.moisture_content}% MC.`,
+      stripe_link: "https://buy.stripe.com/test_placeholder",
+      rarity: "Rare",
+      sawmill_id: "partner-intake",
+      stock_count: 10
     };
 
-    // 4. Upsert to Baget Database
-    const dbId = "2935fa57-8b71-45f7-84bb-fdb46d872b06";
+    // 4. Upsert to Baget Database (Master Inventory)
+    const dbId = "ca64d0ab-aae2-47bf-96ef-f37a0a306e51";
     const response = await fetch(`https://stg-app.baget.ai/api/public/databases/${dbId}/rows`, {
       method: "POST",
       headers: {
@@ -46,7 +45,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         rows: [
           {
-            externalKey: validatedData.species,
+            externalKey: validatedData.species.toLowerCase().replace(/\s+/g, '-'),
             data: dbRow,
           },
         ],

@@ -8,27 +8,48 @@
   --cream: #FAF6F1;
 }
 
-body {
-  color: var(--midnight);
-  background: var(--cream);
-  font-family: 'Nunito', sans-serif;
-}
-
-h1, h2, h3, h4, .font-serif {
-  font-family: 'DM Serif Display', serif;
+@layer base {
+  body {
+    @apply text-midnight bg-cream antialiased;
+    font-variant-ligatures: common-ligatures;
+  }
 }
 
 @layer components {
+  /* High-Contrast Grain Branding */
+  .grain-bg {
+    background-color: var(--midnight);
+    background-image: radial-gradient(circle at 2px 2px, rgba(212, 175, 55, 0.05) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  
   .btn-gold {
-    @apply bg-gold text-midnight px-8 py-4 rounded-[12px] font-bold text-lg hover:bg-gold-light hover:shadow-[0_8px_24px_rgba(212,175,55,0.2)] transition-all;
+    @apply bg-gold text-midnight px-8 py-4 font-bold uppercase tracking-widest text-[10px] hover:bg-white transition-all shadow-xl shadow-gold/10;
   }
-  .btn-midnight {
-    @apply bg-midnight text-cream px-8 py-4 rounded-[12px] font-bold text-lg hover:bg-midnight-muted transition-all;
+  
+  .btn-outline {
+    @apply border border-midnight/10 text-midnight px-8 py-4 font-bold uppercase tracking-widest text-[10px] hover:bg-midnight hover:text-cream transition-all;
   }
-  .badge-gold {
-    @apply bg-gold/10 text-gold-dark border border-gold/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest;
+
+  .font-serif {
+    font-family: 'DM Serif Display', serif;
   }
-  .badge-midnight {
-    @apply bg-midnight/5 text-midnight/60 border border-midnight/10 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest;
-  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--cream);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--midnight);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+.scroll-smooth {
+  scroll-behavior: smooth;
 }
