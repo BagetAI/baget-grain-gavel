@@ -3,18 +3,32 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 61, 43, 31;
-  --background-start-rgb: 250, 246, 241;
-  --background-end-rgb: 250, 246, 241;
+  --midnight: #121212;
+  --gold: #D4AF37;
+  --cream: #FAF6F1;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
+  color: var(--midnight);
+  background: var(--cream);
+  font-family: 'Nunito', sans-serif;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+h1, h2, h3, h4, .font-serif {
+  font-family: 'DM Serif Display', serif;
+}
+
+@layer components {
+  .btn-gold {
+    @apply bg-gold text-midnight px-8 py-4 rounded-[12px] font-bold text-lg hover:bg-gold-light hover:shadow-[0_8px_24px_rgba(212,175,55,0.2)] transition-all;
+  }
+  .btn-midnight {
+    @apply bg-midnight text-cream px-8 py-4 rounded-[12px] font-bold text-lg hover:bg-midnight-muted transition-all;
+  }
+  .badge-gold {
+    @apply bg-gold/10 text-gold-dark border border-gold/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest;
+  }
+  .badge-midnight {
+    @apply bg-midnight/5 text-midnight/60 border border-midnight/10 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest;
   }
 }

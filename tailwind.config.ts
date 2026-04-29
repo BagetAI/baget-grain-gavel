@@ -8,10 +8,25 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        midnight: {
+          DEFAULT: "#121212",
+          light: "#1A1A1A",
+          muted: "#2A2A2A",
+        },
+        gold: {
+          DEFAULT: "#D4AF37",
+          light: "#E5C467",
+          dark: "#B8942A",
+        },
+        workshop: {
+          cream: "#FAF6F1",
+          brown: "#3D2B1F",
+        }
+      },
+      fontFamily: {
+        serif: ["'DM Serif Display'", "serif"],
+        sans: ["'Nunito'", "sans-serif"],
       },
     },
   },

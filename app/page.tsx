@@ -2,7 +2,6 @@ import React from 'react';
 
 async function getInventory() {
   const dbId = "2935fa57-8b71-45f7-84bb-fdb46d872b06";
-  // Added cache: 'no-store' to ensure we see updates during testing
   const res = await fetch(`https://stg-app.baget.ai/api/public/databases/${dbId}/rows`, {
     cache: 'no-store'
   });
@@ -11,92 +10,129 @@ async function getInventory() {
   return data.rows || [];
 }
 
+const GoldBadge = ({ text }: { text: string }) => (
+  <span className="bg-gold/10 text-gold border border-gold/20 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">
+    {text}
+  </span>
+);
+
 export default async function HomePage() {
   const inventory = await getInventory();
 
   return (
-    <div className="px-6">
+    <div className="bg-workshop-cream min-h-screen font-sans text-midnight">
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto py-20 text-center">
-        <h1 className="font-['DM_Serif_Display'] text-5xl md:text-7xl mb-6 max-w-4xl mx-auto leading-tight">
-          Heirloom tools meet the world&apos;s <span className="text-[#C4654A]">rarest lumber</span>.
-        </h1>
-        <p className="text-xl max-w-2xl mx-auto mb-10 text-[#3D2B1F]/80">
-          The only subscription box engineered for the master craftsman. Shop-ready species milled by Bell Forest, paired with precision instruments.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <a href="#inventory" className="bg-[#C4654A] text-[#FAF6F1] px-8 py-4 rounded-[24px] font-bold text-lg hover:shadow-[0_12px_32px_rgba(196,101,74,0.2)] transition-all">
-            Browse Catalog
-          </a>
-          <a href="#about" className="bg-[#7D8B69]/10 text-[#7D8B69] px-8 py-4 rounded-[24px] font-bold text-lg hover:bg-[#7D8B69]/20 transition-all">
-            Our Sourcing
-          </a>
+      <section className="relative h-[80vh] flex items-center bg-midnight overflow-hidden">
+        {/* Decorative background with SVG patterns instead of images to avoid deploy issues */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none">
+          <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+             <defs>
+              <pattern id="grain" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M0 10 Q 5 0, 10 10 T 20 10" fill="none" stroke="#D4AF37" strokeWidth="0.1" opacity="0.3" />
+                <path d="M0 15 Q 5 5, 10 15 T 20 15" fill="none" stroke="#D4AF37" strokeWidth="0.1" opacity="0.3" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#grain)" />
+          </svg>
+        </div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-6 text-center text-workshop-cream">
+          <GoldBadge text="June 2026 Collection" />
+          <h1 className="text-6xl md:text-8xl mb-8 leading-[1.1] max-w-5xl mx-auto font-serif mt-6">
+            Instrument-Grade <span className="text-gold">Ziricote</span> & Precision Steel.
+          </h1>
+          <p className="text-xl max-w-2xl mx-auto mb-12 opacity-80 font-light text-balance">
+            The June Master Edition pairs rare landscape-grain Ziricote with the 15 TPI Lie-Nielsen Dovetail Saw. Strictly limited to 50 boxes.
+          </p>
+          <div className="flex flex-wrap justify-center gap-6">
+            <a href="#inventory" className="btn-gold">Explore the Collection</a>
+            <a href="#process" className="px-8 py-4 border border-workshop-cream/30 rounded-[12px] font-bold hover:bg-workshop-cream/10 transition-all">Sourcing Process</a>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Bar */}
+      <section className="bg-midnight py-8 border-y border-gold/20">
+        <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-center md:justify-between items-center gap-8">
+          {[
+            { id: 'MC', text: '6-8% Moisture Certified' },
+            { id: 'S2S', text: 'Sanded 120-Grit Finish' },
+            { id: 'LA', text: 'Lacey Act Compliant' },
+            { id: 'BF', text: 'Bell Forest Partner' }
+          ].map((item) => (
+            <div key={item.id} className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full border border-gold/40 flex items-center justify-center text-gold text-[10px] font-bold shrink-0">
+                {item.id}
+              </div>
+              <span className="text-workshop-cream text-[10px] font-bold uppercase tracking-[0.2em] whitespace-nowrap opacity-70">
+                {item.text}
+              </span>
+            </div>
+          ))}
         </div>
       </section>
 
       {/* Inventory Catalog */}
-      <section id="inventory" className="max-w-7xl mx-auto py-20">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+      <section id="inventory" className="max-w-7xl mx-auto py-32 px-6">
+        <div className="mb-24 flex flex-col md:flex-row justify-between items-end gap-12">
           <div className="max-w-xl">
-            <h2 className="font-['DM_Serif_Display'] text-4xl mb-4 text-[#3D2B1F]">The 2026 Collection</h2>
-            <p className="text-[#3D2B1F]/70">Initial inventory of curated bundles featuring Bocote, Ziricote, and Curly Maple.</p>
+            <h2 className="text-5xl mb-6 font-serif">June Storefront</h2>
+            <p className="text-midnight/60 text-lg">
+              Curated bundles and individual "Master Grade" off-cuts sourced from boutique PNW mills.
+            </p>
           </div>
           <div className="flex gap-4">
-            <span className="bg-[#7D8B69]/20 text-[#7D8B69] px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wide">6-8% Moisture</span>
-            <span className="bg-[#C4654A]/20 text-[#C4654A] px-4 py-1 rounded-full text-sm font-bold uppercase tracking-wide">S2S Milled</span>
+             <GoldBadge text="In Stock" />
+             <GoldBadge text="Kiln Dried" />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
           {inventory.map((row: any) => (
-            <div key={row.id} className="bg-white rounded-[24px] overflow-hidden shadow-[0_12px_32px_rgba(61,43,31,0.05)] border border-[#3D2B1F]/5 group transition-transform hover:-translate-y-2">
-              <div className="h-64 overflow-hidden relative">
+            <div key={row.id} className="group flex flex-col">
+              <div className="aspect-[4/5] overflow-hidden rounded-[4px] relative mb-10 bg-midnight/5 shadow-2xl transition-all group-hover:shadow-gold/10">
                 <img 
                   src={row.data.image_url} 
                   alt={row.data.species} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                 />
-                <div className="absolute top-4 right-4 bg-[#FAF6F1]/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-[#3D2B1F]">
-                  {row.data.tier} Tier
+                <div className="absolute top-8 left-8 flex flex-col gap-3">
+                  <span className="bg-midnight text-workshop-cream px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                    {row.data.tier} Tier
+                  </span>
+                  {row.data.rarity && (
+                    <span className="bg-gold text-midnight px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                      {row.data.rarity}
+                    </span>
+                  )}
                 </div>
-                {row.data.rarity && (
-                  <div className="absolute bottom-4 left-4 bg-[#3D2B1F]/80 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold text-[#FAF6F1] uppercase tracking-tighter">
-                    {row.data.rarity}
-                  </div>
-                )}
               </div>
-              <div className="p-8">
-                <h3 className="font-['DM_Serif_Display'] text-2xl mb-2">{row.data.species}</h3>
-                <p className="text-sm text-[#3D2B1F]/70 mb-6 leading-relaxed line-clamp-2">
-                  {row.data.description}
+              
+              <div className="flex-1 flex flex-col px-2">
+                <div className="flex justify-between items-baseline mb-4">
+                  <h3 className="text-3xl font-serif">{row.data.species}</h3>
+                  <span className="text-2xl font-serif text-gold">${row.data.price_cents / 100}</span>
+                </div>
+                <p className="text-midnight/60 text-sm mb-10 leading-relaxed line-clamp-2 font-light italic">
+                  &ldquo;{row.data.description}&rdquo;
                 </p>
                 
-                <div className="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-[#3D2B1F]/5">
-                  <div className="text-[10px] text-[#7D8B69] uppercase font-bold tracking-widest">
-                    Dimensions
-                    <span className="block text-[#3D2B1F] text-sm mt-1 normal-case font-semibold">{row.data.dimensions}</span>
+                <div className="mt-auto pt-8 border-t border-midnight/10 flex justify-between items-center mb-10">
+                  <div className="text-[10px] font-bold uppercase tracking-widest opacity-40">
+                    Sizing
+                    <span className="block text-midnight text-sm mt-1 opacity-100 normal-case">{row.data.dimensions}</span>
                   </div>
-                  <div className="text-[10px] text-[#7D8B69] uppercase font-bold tracking-widest text-right">
-                    Board Footage
-                    <span className="block text-[#3D2B1F] text-sm mt-1 normal-case font-semibold">{row.data.board_footage || '0.25'} BF</span>
+                  <div className="text-right text-[10px] font-bold uppercase tracking-widest opacity-40">
+                    Condition
+                    <span className="block text-midnight text-sm mt-1 opacity-100 normal-case">{row.data.moisture_content}% MC • S2S</span>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center mb-6">
-                   <div className="text-[10px] text-[#7D8B69] uppercase font-bold tracking-widest">
-                    Moisture
-                    <span className="block text-[#3D2B1F] text-sm mt-1 normal-case font-semibold">{row.data.moisture_content}% MC</span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-3xl font-['DM_Serif_Display'] text-[#C4654A]">${row.data.price_cents / 100}</span>
-                  </div>
-                </div>
-                
                 <a 
                   href={row.data.stripe_link}
-                  className="block w-full text-center bg-[#3D2B1F] text-[#FAF6F1] py-4 rounded-[16px] font-bold hover:bg-[#C4654A] transition-colors"
+                  className="w-full text-center py-5 bg-midnight text-workshop-cream font-bold uppercase tracking-widest text-[10px] hover:bg-gold hover:text-midnight transition-all rounded-[2px]"
                 >
-                  Secure Subscription
+                  Purchase Entry
                 </a>
               </div>
             </div>
@@ -104,52 +140,62 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Sourcing/Process Section */}
-      <section id="about" className="max-w-7xl mx-auto py-20 border-t border-[#3D2B1F]/5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="bg-[#C4654A]/5 p-12 rounded-[24px]">
-            <h2 className="font-['DM_Serif_Display'] text-4xl mb-6">Milled to Perfection</h2>
-            <ul className="space-y-6">
-              <li className="flex gap-4">
-                <div className="shrink-0 w-8 h-8 rounded-full bg-[#C4654A] text-[#FAF6F1] flex items-center justify-center font-bold">1</div>
-                <div>
-                  <h4 className="font-bold text-[#3D2B1F]">Ethical Sourcing</h4>
-                  <p className="text-sm opacity-70">Direct partnerships with importers like West Penn and Cook Woods ensure Lacey Act compliance.</p>
-                </div>
-              </li>
-              <li className="flex gap-4">
-                <div className="shrink-0 w-8 h-8 rounded-full bg-[#C4654A] text-[#FAF6F1] flex items-center justify-center font-bold">2</div>
-                <div>
-                  <h4 className="font-bold text-[#3D2B1F]">Precision Drying</h4>
-                  <p className="text-sm opacity-70">Kiln-dried to 6-8% moisture content to prevent seasonal movement and checking.</p>
-                </div>
-              </li>
-              <li className="flex gap-4">
-                <div className="shrink-0 w-8 h-8 rounded-full bg-[#C4654A] text-[#FAF6F1] flex items-center justify-center font-bold">3</div>
-                <div>
-                  <h4 className="font-bold text-[#3D2B1F]">Integrated Fulfillment</h4>
-                  <p className="text-sm opacity-70">Processed at the Bell Forest facility in Michigan. S2S surfaced and sanded to 120-grit.</p>
-                </div>
-              </li>
-            </ul>
-          </div>
+      {/* Technical Detail Section */}
+      <section id="process" className="bg-midnight py-40 overflow-hidden relative">
+         <div className="absolute top-0 right-0 w-1/2 h-full opacity-5">
+           <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+             <path d="M0 0 L100 50 L0 100 Z" fill="#D4AF37" />
+           </svg>
+         </div>
+         
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-32 items-center">
           <div>
-            <span className="text-[#C4654A] font-bold uppercase tracking-widest text-sm mb-4 block">The Experience</span>
-            <h2 className="font-['DM_Serif_Display'] text-5xl mb-6">Handle-First Engineering</h2>
-            <p className="text-lg text-[#3D2B1F]/80 mb-8 leading-relaxed">
-              Every box is more than materials; it&apos;s a curated project narrative. Our custom packaging ensures your high-density lumber and precision steel never touch in transit, arriving ready for the bench.
-            </p>
-            <div className="grid grid-cols-2 gap-8">
-              <div>
-                <span className="block text-3xl font-['DM_Serif_Display'] text-[#7D8B69]">40%</span>
-                <p className="text-xs uppercase font-bold text-[#3D2B1F]/50 tracking-tighter">Savings vs Retail</p>
-              </div>
-              <div>
-                <span className="block text-3xl font-['DM_Serif_Display'] text-[#7D8B69]">100%</span>
-                <p className="text-xs uppercase font-bold text-[#3D2B1F]/50 tracking-tighter">Recyclable EPE</p>
-              </div>
+            <span className="text-gold uppercase tracking-[0.4em] text-[10px] font-bold mb-8 block">Material Standards</span>
+            <h2 className="text-5xl md:text-7xl mb-12 leading-tight text-workshop-cream font-serif">The <span className="italic text-gold">Master</span> Grade.</h2>
+            <div className="space-y-12">
+              {[
+                { title: 'Boutique Milling', desc: 'Every board is resawn and surfaced to order at Bell Forest Products, ensuring grain continuity.' },
+                { title: 'Digital MC Audit', desc: 'Verification using Wagner and Lignomat meters. We reject anything above 8.5%.' },
+                { title: 'Heirloom Tooling', desc: 'Precision steel from Lie-Nielsen and Veritas. Tools designed to last generations.' }
+              ].map((item, idx) => (
+                <div key={idx} className="flex gap-8">
+                  <div className="text-gold font-serif text-3xl opacity-40">0{idx + 1}</div>
+                  <div>
+                    <h4 className="text-xl font-bold text-workshop-cream mb-2">{item.title}</h4>
+                    <p className="text-workshop-cream/60 font-light leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+          
+          <div className="bg-white/5 p-16 border border-white/10 rounded-[4px] backdrop-blur-sm">
+             <h3 className="text-3xl font-serif text-gold mb-8">June Narrative</h3>
+             <p className="text-workshop-cream/80 text-lg mb-12 font-light leading-relaxed italic">
+               &ldquo;Ziricote is nature&apos;s map. This month, we focus on joinery that respects the landscape—pairing the densest Mexican Ziricote with the high-carbon bite of a Lie-Nielsen saw.&rdquo;
+             </p>
+             <div className="grid grid-cols-2 gap-12 pt-12 border-t border-white/10">
+               <div>
+                 <span className="text-gold text-4xl font-serif block mb-2">50</span>
+                 <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-workshop-cream opacity-50">Master Units</span>
+               </div>
+               <div>
+                 <span className="text-gold text-4xl font-serif block mb-2">0.35</span>
+                 <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-workshop-cream opacity-50">Avg. BF Per Box</span>
+               </div>
+             </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Footer CTA */}
+      <section className="bg-workshop-cream py-32 text-center border-t border-midnight/5">
+        <div className="max-w-2xl mx-auto px-6">
+          <h2 className="text-4xl mb-8 font-serif italic">Build with the best.</h2>
+          <p className="text-midnight/60 mb-12">
+            Join 1,200+ master craftsmen who trust Grain & Gavel for their material and tool procurement.
+          </p>
+          <a href="#inventory" className="btn-midnight">Join the June Cohort</a>
         </div>
       </section>
     </div>
