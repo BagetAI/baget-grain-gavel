@@ -2,8 +2,9 @@ import React from 'react';
 
 async function getInventory() {
   const dbId = "2935fa57-8b71-45f7-84bb-fdb46d872b06";
-  const res = await fetch(`https://baget.ai/api/public/databases/${dbId}/rows`, {
-    next: { revalidate: 3600 }
+  // Added cache: 'no-store' to ensure we see updates during testing
+  const res = await fetch(`https://stg-app.baget.ai/api/public/databases/${dbId}/rows`, {
+    cache: 'no-store'
   });
   if (!res.ok) return [];
   const data = await res.json();
@@ -58,21 +59,39 @@ export default async function HomePage() {
                 <div className="absolute top-4 right-4 bg-[#FAF6F1]/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-[#3D2B1F]">
                   {row.data.tier} Tier
                 </div>
+                {row.data.rarity && (
+                  <div className="absolute bottom-4 left-4 bg-[#3D2B1F]/80 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold text-[#FAF6F1] uppercase tracking-tighter">
+                    {row.data.rarity}
+                  </div>
+                )}
               </div>
               <div className="p-8">
                 <h3 className="font-['DM_Serif_Display'] text-2xl mb-2">{row.data.species}</h3>
-                <p className="text-sm text-[#3D2B1F]/70 mb-6 leading-relaxed">
+                <p className="text-sm text-[#3D2B1F]/70 mb-6 leading-relaxed line-clamp-2">
                   {row.data.description}
                 </p>
-                <div className="flex justify-between items-center mb-6 py-4 border-y border-[#3D2B1F]/5">
-                  <div className="text-xs text-[#7D8B69] uppercase font-bold tracking-widest">
+                
+                <div className="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-[#3D2B1F]/5">
+                  <div className="text-[10px] text-[#7D8B69] uppercase font-bold tracking-widest">
                     Dimensions
                     <span className="block text-[#3D2B1F] text-sm mt-1 normal-case font-semibold">{row.data.dimensions}</span>
+                  </div>
+                  <div className="text-[10px] text-[#7D8B69] uppercase font-bold tracking-widest text-right">
+                    Board Footage
+                    <span className="block text-[#3D2B1F] text-sm mt-1 normal-case font-semibold">{row.data.board_footage || '0.25'} BF</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center mb-6">
+                   <div className="text-[10px] text-[#7D8B69] uppercase font-bold tracking-widest">
+                    Moisture
+                    <span className="block text-[#3D2B1F] text-sm mt-1 normal-case font-semibold">{row.data.moisture_content}% MC</span>
                   </div>
                   <div className="text-right">
                     <span className="text-3xl font-['DM_Serif_Display'] text-[#C4654A]">${row.data.price_cents / 100}</span>
                   </div>
                 </div>
+                
                 <a 
                   href={row.data.stripe_link}
                   className="block w-full text-center bg-[#3D2B1F] text-[#FAF6F1] py-4 rounded-[16px] font-bold hover:bg-[#C4654A] transition-colors"
